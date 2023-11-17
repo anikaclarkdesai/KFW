@@ -123,10 +123,10 @@ public class Weapon {
 
 	
 	public void ReverseHorz() {
-		dxV=dxV*-1;
+		xV+=dxV*-1;
 	}
 	public void ReverseVert(){
-		dyV=dyV*-1;
+		yV+=dyV*-1;
 	}
 	public void Horz() {
 		xV+=dxV;

@@ -6,7 +6,7 @@ public class Main extends JFrame{
 	private static final int WIDTH =1800;
 	private static final int HEIGHT=1600;
 	
-	public Main () {
+	public Main() {
 		super("KungFuWizards");
 		setSize(WIDTH, HEIGHT);
 		Game play = new Game();

@@ -38,8 +38,10 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 	private boolean charselction;
 	private int mapWidth, mapHeight;
 	private long timeatpoint;
-	private long currenttime;
+	private long currenttime, currentime;
+	//enemies stuff
 	Queue<Enemies> enemies;
+	ArrayList<Range> et;
 	public Game() {
 		new Thread(this).start();	
 		this.addKeyListener(this);
@@ -52,6 +54,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		time= System.currentTimeMillis()/1000;
 		Typestr=1;
 		currenttime=System.currentTimeMillis()/1000;
+	
 		//startscreen
 		starter=true;
 		junglebg= new ImageIcon("junglebg.jfif");
@@ -73,6 +76,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 
 		//enemies
 		enemies= setEs();
+		et= eattacks();
 	}
 
 	
@@ -115,6 +119,11 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 
 		return temp;
 
+	}
+	private ArrayList<Range> eattacks(){
+		ArrayList <Range> temp= new ArrayList<Range>();
+		temp.add(new eattack(100,100));
+		return temp;
 	}
 	public void paint(Graphics g){
 		
@@ -170,11 +179,16 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		//System.out.println("is there anything here???" +shoot.size());
 		for(Range r: shoot){
 			g2d.drawImage(r.getImg().getImage(), r.getX(), r.getY(), 50,50, this);
-			r.Horz();
-			if(r.getX()>1800){
+			r.ReverseHorz();
+			if(r.getX()<0){
 				shoot.remove(r);
 			}
+			if(r.getX()+10<=enemies.element().getX()+enemies.element().getW()&&r.getY()+10>enemies.element().getY()&&r.getY()+10<=enemies.element().getY()+enemies.element().getW()){
+					shoot.remove(r);
+					enemies.remove();
+			}
 		}
+		
 	}
 
 
@@ -184,7 +198,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		g2d.clearRect(0,0,getSize().width, getSize().height);
 		background(g2d);
 		drawchosenchar(g2d);
-			drawenemies(g2d);
+		drawenemies(g2d);
 
 	}
 
@@ -246,10 +260,35 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 
 private void drawenemies(Graphics g2d) {
 	enemies.element().drawChar(g2d);
+
+	
+	eattack(g2d);
 	}
 
 
+	public void eattack(Graphics g2d) {
+	
+		if((System.currentTimeMillis()-currentime)%200==0) {
+			currentime= System.currentTimeMillis();
+			et.add(new Range(enemies.element().getX(), enemies.element().getY(), 2,2, a.getName(), a.getDamage(), a.getHealth(), a.getLevel(), a.getImg()));
+			draweattack(g2d);
+			System.out.println("working");
+		}
+	
+	
+	
+	}
 
+	public void draweattack(Graphics g2d){
+		for(Range e: et){
+			g2d.drawImage(e.getImg().getImage(), e.getX(), e.getY(), 200, 200, this);
+			e.Horz();
+			if(e.getX()>1800){
+				et.remove(e);
+			}
+		}
+	
+	}
 public int mazex(int maze) {
 	mazex+=maze;
 	return mazex;
@@ -272,17 +311,19 @@ public void keyTyped(KeyEvent e) {
 	@Override
 	public void keyPressed(KeyEvent e) {
 
-
-
-
-
 		// TODO Auto-generated method stub
 		int key;
 		key= e.getKeyCode();
+		
+		
 		//w
 		if(key==87&&starter==false) {
-			//characterchosen.setY(-5);
-			mazey(+31);
+			characterchosen.setY(-5);
+		if(characterchosen.getY()<=0){
+			mazey(+31);	
+		
+			}
+
 		}
 		//s
 		 if(key==83&&starter==false) {
@@ -295,12 +336,14 @@ public void keyTyped(KeyEvent e) {
 			mazex(+31);
 		}
 		//d
-		 if(key==68&&starter==false) {
-			//characterchosen.setX(+5);
-			mazex(-31);
-		}
-
-
+		 if(key==68 && starter==false) {
+			characterchosen.setX(+5);
+		 
+		if(key==68 && starter==false&&characterchosen.getX()+100>mazebg1.getIconWidth()){
+			mazex(-31);	
+			}
+		
+		 }
 		//wa
 		
 		//wd
@@ -328,8 +371,9 @@ public void keyTyped(KeyEvent e) {
 		}
 		//i
 		if(key==73&&characterchosen!=null) {
-	abilityChooser(0);}
-	enemies.remove();
+		abilityChooser(0);
+	}
+		
 		//j
 		if(key==74&&characterchosen!=null) {
 		abilityChooser(1);
@@ -346,6 +390,7 @@ public void keyTyped(KeyEvent e) {
 		abilityChooser(3);
 		
 	}
+
 }
 	
 

@@ -7,7 +7,7 @@ public class Enemies{
 	private int x,y,w,h, dx, dy;
 	private int hp, da;
 	private ImageIcon img;
-
+	
 	
 	public Enemies(int xV, int yV, int width, int height, ImageIcon i, int dxV, int dyV, int health, int damage) {
 		x=xV;
@@ -24,6 +24,8 @@ public class Enemies{
         g2d.drawImage(img.getImage(), x, y, w,h, null);
         
     }
+
+
 	public int getX() {
 		return x;
 	}

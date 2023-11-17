@@ -4,8 +4,6 @@ import javax.swing.ImageIcon;
 
 public class Range extends Weapon{
 public int x,y,h,w,speed, dx,dy, ldx;
-	private ArrayList<Character>Wizards;
-	
 	
 	public Range(String nam, int dam,int hea ,int lev, ImageIcon i) {
 		// TODO Auto-generated constructor stub
@@ -17,7 +15,7 @@ public int x,y,h,w,speed, dx,dy, ldx;
 	}
 
 
-	public int getSpeed() {
+    public int getSpeed() {
 		return speed;
 	}
 
