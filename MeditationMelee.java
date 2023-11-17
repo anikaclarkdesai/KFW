@@ -9,8 +9,7 @@ public class MeditationMelee extends Melee{
 		// TODO Auto-generated constructor stub
 	}
 	public void attack(Graphics g2d){
-		g2d.drawImage(super.getImg().getImage(), super.getX()-100, super.getY()-150, 400,400 ,null);
-		System.out.println("x val" + super.getX()+" y val"+ super.getY());
+		g2d.drawImage(super.getImg().getImage(), super.getX()-100 ,super.getY()-150, 400,400 ,null);
 	}
 
 }

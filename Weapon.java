@@ -161,7 +161,7 @@ public class Weapon {
 		this.yV = y;
 	}
 
-	public void attack(Graphics g2d){
+	public void atttack(Graphics g2d){
 		g2d.drawImage(getImg().getImage(), getX()-100, getY()-150, 400,400 ,null);
 
 	}

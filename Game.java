@@ -11,6 +11,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -37,6 +39,7 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 	private int mapWidth, mapHeight;
 	private long timeatpoint;
 	private long currenttime;
+	Queue<Enemies> enemies;
 	public Game() {
 		new Thread(this).start();	
 		this.addKeyListener(this);
@@ -67,6 +70,9 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		//range shots
 		shoot = new ArrayList<Range> ();
 		hit = new ArrayList <Melee>();
+
+		//enemies
+		enemies= setEs();
 	}
 
 	
@@ -101,7 +107,15 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		
 		return able;
 	}
+	private Queue<Enemies> setEs(){
+		Queue <Enemies> temp= new LinkedList<>();
+		temp.add(new Werewolf(300,100,2,5));
+		temp.add(new Werewolf(500,500,5,2));
+		temp.add(new Werewolf(900,300,3,4));
 
+		return temp;
+
+	}
 	public void paint(Graphics g){
 		
 		Graphics2D twoDgraph = (Graphics2D) g; 
@@ -170,6 +184,8 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 		g2d.clearRect(0,0,getSize().width, getSize().height);
 		background(g2d);
 		drawchosenchar(g2d);
+			drawenemies(g2d);
+
 	}
 
 
@@ -223,8 +239,15 @@ public class Game  extends JPanel implements Runnable, KeyListener, MouseListene
 			//System.out.println(w);
 			
 		}
-		
+		 
+	
 	}
+
+
+private void drawenemies(Graphics g2d) {
+	enemies.element().drawChar(g2d);
+	}
+
 
 
 public int mazex(int maze) {
@@ -237,7 +260,7 @@ public int mazey(int mazze) {
 	return mazey;
 }
 	@Override
-	public void keyTyped(KeyEvent e) {
+public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -248,6 +271,11 @@ public int mazey(int mazze) {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+
+
+
+
+
 		// TODO Auto-generated method stub
 		int key;
 		key= e.getKeyCode();
@@ -257,21 +285,43 @@ public int mazey(int mazze) {
 			mazey(+31);
 		}
 		//s
-		if(key==83&&starter==false) {
+		 if(key==83&&starter==false) {
 			//characterchosen.setY(+5);
 			mazey(-31);
 		}
 		//a
-		if(key==65&&starter==false) {
+		 if(key==65&&starter==false) {
 			//characterchosen.setX(-5);
 			mazex(+31);
 		}
 		//d
-		if(key==68&&starter==false) {
+		 if(key==68&&starter==false) {
 			//characterchosen.setX(+5);
 			mazex(-31);
 		}
-		//w
+
+
+		//wa
+		
+		//wd
+
+
+		///sa
+
+
+		///sd
+
+
+
+
+
+
+
+
+
+
+
+		//w stsrt button
 		if(starter==true&&key==87&&characterchosen!=null) {
 			starter=false;
 			gameplay=true;
@@ -279,6 +329,7 @@ public int mazey(int mazze) {
 		//i
 		if(key==73&&characterchosen!=null) {
 	abilityChooser(0);}
+	enemies.remove();
 		//j
 		if(key==74&&characterchosen!=null) {
 		abilityChooser(1);
@@ -312,7 +363,33 @@ public int mazey(int mazze) {
 					if(characterchosen.getAbility().get(index) instanceof Melee){
 				ability.add(characterchosen.getAbility().get(index));
 				Weapon m=characterchosen.getAbility().get(index);
-				hit.add(new Melee(characterchosen.getX(),characterchosen.getY(),m.getName(), m.getDamage(), m.getHealth(), m.getLevel(), m.getImg()));
+
+				//checking what type it is
+					if(characterchosen.getAbility().get(index) instanceof MeditationMelee){
+			hit.add(new MeditationMelee(characterchosen.getX(),characterchosen.getY()));
+
+					} 
+				else if(characterchosen.getAbility().get(index) instanceof JewJab){
+			hit.add(new JewJab(characterchosen.getX(),characterchosen.getY()));
+			
+					}
+				else if(characterchosen.getAbility().get(index) instanceof ChallahCharge){
+			hit.add(new ChallahCharge(characterchosen.getX(),characterchosen.getY()));
+
+						}
+				else if(characterchosen.getAbility().get(index) instanceof RightCross){
+			hit.add(new RightCross(characterchosen.getX(),characterchosen.getY()));
+				}
+					else if(characterchosen.getAbility().get(index) instanceof Crucifiction){
+			hit.add(new Crucifiction(characterchosen.getX(),characterchosen.getY()));
+						}
+				else if(characterchosen.getAbility().get(index) instanceof ShankShallom){
+			hit.add(new ShankShallom(characterchosen.getX(),characterchosen.getY()));
+				}
+					else if(characterchosen.getAbility().get(index) instanceof HijabHit){
+			hit.add(new HijabHit(characterchosen.getX(),characterchosen.getY()));
+					}
+
 				 timeatpoint=System.currentTimeMillis()/1000;
 			
 			}
