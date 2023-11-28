@@ -5,11 +5,12 @@ import javax.swing.ImageIcon;
 
 public class Enemies{
 	private int x,y,w,h, dx, dy;
-	private int hp, da;
+	private int hp, da, level;
 	private ImageIcon img;
 	
 	
-	public Enemies(int xV, int yV, int width, int height, ImageIcon i, int dxV, int dyV, int health, int damage) {
+	public Enemies(int xV, int yV, int width, int height, ImageIcon i, int dxV, 
+	int dyV, int health, int damage, int lev) {
 		x=xV;
 		y=yV;
 		w=width;
@@ -19,12 +20,17 @@ public class Enemies{
 		dy=dyV;
 		hp=health;
 		da= damage;
+		level=lev;
     }
     public void drawChar(Graphics g2d) {
         g2d.drawImage(img.getImage(), x, y, w,h, null);
         
     }
 
+	 public int da (int level){
+		level+=da*2;
+		return da;
+	 }
 
 	public int getX() {
 		return x;
@@ -98,7 +104,13 @@ public class Enemies{
 		this.img = img;
 	}
 
-
+	public int getLevel() {
+		
+	return level;
+}
+	public void setLevel(int level) {
+	this.level = level;
+}
 
 	
 }

@@ -192,6 +192,12 @@ public class Character {
 	}
 
 	public int getHp() {
+		
+		
+		
+		
+		
+		
 		return hp;
 	}
 

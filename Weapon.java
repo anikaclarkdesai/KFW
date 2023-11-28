@@ -165,5 +165,4 @@ public class Weapon {
 		g2d.drawImage(getImg().getImage(), getX()-100, getY()-150, 400,400 ,null);
 
 	}
-	
 }

@@ -13,5 +13,4 @@ public class Melee extends Weapon{
     public void attack(Graphics g2d) {
     }
 
-
 }
