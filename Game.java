@@ -10,9 +10,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -39,6 +44,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private int mapWidth, mapHeight;
 	private long timeatpoint;
 	private long currenttime, currentime;
+
+	private boolean up, down, left, right;
 	// enemies stuff
 	Queue<Enemies> enemies;
 	ArrayList<Range> et;
@@ -46,6 +53,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private boolean lose, pcollide, ecollide;
 	private int enemielevel;
 
+
+
+	private File file;
 	public Game() {
 		new Thread(this).start();
 		this.addKeyListener(this);
@@ -78,9 +88,17 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		shoot = new ArrayList<Range>();
 		hit = new ArrayList<Melee>();
 		pow= new ArrayList<eattack>();
+
+		up=false;
+		down=false;
+		left=false;
+		right=false;
 		// enemies
 		enemies = setEs();
 		enemielevel=1;
+
+		//save file
+		file= new File("savefile.txt");
 	}
 
 	public void run() {
@@ -117,7 +135,41 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		return temp;
 
 	}
+	public void createsvaefile() {
+		try{
+			if(file.createNewFile()){
+				System.out.println("Succesful");}
+				else{
+					System.out.println("file already exists");
 
+				}
+				}catch(IOException e){
+			e.printStackTrace();
+				}
+			}
+
+	public void write2file(){
+		try{
+ FileWriter mywriter = new FileWriter(file);
+ mywriter.write("You Have"+enemies.size()+ "enemies left");
+ mywriter.close();
+	}
+	catch(IOException e){
+	e.printStackTrace();	
+	}
+	
+}
+	public void ReadFile(){
+		try{
+			Scanner sc = new Scanner(file);
+			while(sc.hasNext()){
+				System.out.println(sc.nextLine());
+			}
+			}catch (FileNotFoundException e){
+				e.printStackTrace();
+			}
+		}
+	
 	public void paint(Graphics g) {
 
 		Graphics2D twoDgraph = (Graphics2D) g;
@@ -141,7 +193,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		}
 		if(lose){
 			gameplay=true;
-			charselction = false;
+			charselction=false;
 			starter = false;
 		endscreen(g2d);
 		}
@@ -153,86 +205,107 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	}
 
 	private void drawmelee(Graphics g2d) {
-		for (Melee m : hit) {
-			if (!hit.isEmpty()) {
-
-				m.attack(g2d);
+		for (int i=0; i<hit.size(); i++) {
+			
+			
+	if (!hit.isEmpty()) {
+			hit.get(i).attack(g2d);
 				// System.out.println("should draw");
-				if ((System.currentTimeMillis() / 1000) - timeatpoint > .15) {
-					hit.remove(m);
+	if ((System.currentTimeMillis() / 1000) - timeatpoint > .15) {
+				hit.remove(i);
+					//break;
 				}
 				if (hit.size() > 1) {
-					hit.remove(m);
+					hit.remove(i);
+					//break;
 				}
-
-			}
+				
 			//collision for player
-			if ( (m.getX()+300 >= enemies.element().getX() && m.getX()+300 <=  enemies.element().getX() + enemies.element().getW())||
-			( m.getX()-100>=enemies.element().getX() && m.getX()-100 <=  enemies.element().getX() + enemies.element().getW())||
-			(m.getY()+300 >= enemies.element().getY() && m.getY()+300 <=  enemies.element().getY() + enemies.element().getH())||
-			( m.getY()-100>=enemies.element().getY() && m.getY()-100 <=  enemies.element().getY() + enemies.element().getH())){
-				hit.remove(m);
-				enemies.remove();
-				pcollide=true;
+			
+				collisionmelee();
+				}
 			}
-			
-			
 		}
-	//	for(eattack e:pow){
+	//	for(eattack e:pow)
+
 	
-}
-	
+
+	private void collisionmelee() {
+			for (int i=0; i<hit.size(); i++) {
+			if (hit.get(i).getX() <= enemies.element().getX() + enemies.element().getW()
+				&& hit.get(i).getY() > enemies.element().getY()
+				&& hit.get(i).getY() <= enemies.element().getY() + enemies.element().getW()) {
+					
+				enemies.remove();
+				ecollide=true;
+			} 
+		}
+	}
 
 	private void drawrange(Graphics g2d) {
 		// System.out.println("is there anything here???" +shoot.size());
-		for (Range r : shoot) {
-			g2d.drawImage(r.getImg().getImage(), r.getX(), r.getY(), 50, 50, this);
-			r.ReverseHorz();
-			if (r.getX() < 0) {
-				shoot.remove(r);
+		for (int i=0; i<shoot.size(); i++) {
+			g2d.drawImage(shoot.get(i).getImg().getImage(), shoot.get(i).getX(), shoot.get(i).getY(), 50, 50, this);
+		
+		
+ 
+
+			if (shoot.get(i).getX() < 0) {
+				shoot.remove(i);
 			}
 			// collision for player
-			if (r.getX() <= enemies.element().getX() + enemies.element().getW()
-					&& r.getY() > enemies.element().getY()
-					&& r.getY() <= enemies.element().getY() + enemies.element().getW()) {
-				shoot.remove(r);
+			if (shoot.get(i).getX() <= enemies.element().getX() + enemies.element().getW()
+					&& shoot.get(i).getY() > enemies.element().getY()
+					&& shoot.get(i).getY() <= enemies.element().getY() + enemies.element().getW()) {
+				shoot.remove(i);
 				enemies.remove();
 				pcollide=true;
 			} 
-			
 		}
-			
-		for( eattack e: pow){
-		g2d.drawImage(e.getImg().getImage(), e.getX(), e.getY(), 50, 50, this);
-		e.Horz();
-		if (e.getX() > 1700) {
-		shoot.remove(e);
+		for( int i=0; i<pow.size(); i++){
+			if(lose!=true){
+		g2d.drawImage(pow.get(i).getImg().getImage(), pow.get(i).getX(), pow.get(i).getY(), 50, 50, this);
+		pow.get(i).setDx(pow.get(i).getX()+2);
+		if (pow.get(i).getX() > 1700) {
+		pow.remove(i);
 			}
-
+		}
+	
 			//collison for enemie
-			if (e.getX()  <= characterchosen.getX() + characterchosen.getW()
-		&& e.getY()  > characterchosen.getY()
-		&& e.getY()  <= characterchosen.getY() +characterchosen.getW()) {
+			if (pow.get(i).getX() >= characterchosen.getX()&&
+			pow.get(i).getX()<=characterchosen.getX()+ characterchosen.getW()&&
+		 pow.get(i).getY()  >= characterchosen.getY() && 
+			pow.get(i).getY()  <= characterchosen.getY() +characterchosen.getH()) {
 		
-		pow.remove(e);
+		pow.remove(i);
 		lose=true;
 		ecollide=true;
 		}
 	}
 	}
-	
+
+
 	private void gameplay(Graphics g2d) {
 		// TODO Auto-generated method stub
 		g2d.clearRect(0, 0, getSize().width, getSize().height);
 		background(g2d);
-		drawchosenchar(g2d);
-		drawenemies(g2d);
+		
+		if(!enemies.isEmpty()){
+			drawenemies(g2d);
+		}
+		
 			if(lose!=true){
 			eattack(g2d);
+			drawchosenchar(g2d);
 			}
+			
+			if(enemies.isEmpty()){
+			winscreen(g2d);
+		}
 		}
 
 
+	
 	private void drawchosenchar(Graphics g2d) {
 		// TODO Auto-generated method stub
 		g2d.drawImage(characterchosen.getImg().getImage(), characterchosen.getX(), characterchosen.getY(),
@@ -299,6 +372,25 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		g2d.drawString(Lost.substring(0, Typestr), 475, 575);
 
 		}
+
+	private void winscreen(Graphics g2d) {
+			Color transgrey = new Color(27, 27, 27,150);
+			String Won="You Won";
+			g2d.setColor(transgrey);
+		g2d.fillRect(0, 0, getSize().width, getSize().height);
+			
+
+			Typestr++;
+		if (Typestr > Won.length()) {
+		Typestr = Won.length();
+	}
+		g2d.setColor(Color.green);
+		g2d.setFont(new Font("Broadway", Font.BOLD, 100));
+		g2d.drawString(Won.substring(0, Typestr), 475, 575);
+
+	}
+
+
 public int enemielevel(){
 if(ecollide){
 	enemielevel++;
@@ -338,20 +430,45 @@ return enemielevel;
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
+		
+//add temporary values dx=0 dy=0
 		// TODO Auto-generated method stub
 		int key;
 		key = e.getKeyCode();
-
-		// w
-		if ( starter == false && lose==false) {
-			if (key == 87 && starter == false && characterchosen.getY() >= 0) {
-				characterchosen.setY(-15);
-			} else if (key == 87 && starter == false && characterchosen.getY() <= 0) {
-				mazey(+31);
-
+		int dx=0;
+		int dy=0;
+//add them changing in key lisetner
+			if(e.getKeyCode()==KeyEvent.VK_W){
+				up=true;
+				dy=-1;
+				System.out.println("w pressed");
 			}
-		
+			 if(e.getKeyCode()==KeyEvent.VK_A){
+			left=true;
+			dx=-1;
+			}
+			if(e.getKeyCode()==KeyEvent.VK_D){
+				right=true;
+				dx=1;
+			}
+			 if(e.getKeyCode()==KeyEvent.VK_S){
+				down=true;
+			dy=1;
+			
+			}
+			
+		// w
+		if ( gameplay) {
+			
+	if (key == 87 && starter == false && characterchosen.getY() >= 0) {
+				characterchosen.setY(-15);
+				
+		} else if (key == 87 && starter == false && characterchosen.getY() <= 0) {
+			mazey(+31);
+				
+			}
+			
+	
 
 		// s
 	
@@ -383,7 +500,6 @@ return enemielevel;
 
 			}
 		}
-	
 		// wa
 
 		// wd
@@ -394,12 +510,14 @@ return enemielevel;
 
 		// w stsrt button
 		if (starter == true && key == 87 && characterchosen != null&&lose==false) {
-			starter = false;
 			gameplay = true;
 		}
 		// i
-		if (key == 73 && characterchosen != null&&lose==false) {
+		if (e.getKeyCode()==KeyEvent.VK_I && characterchosen != null&&lose==false) {
 			abilityChooser(0);
+
+
+
 		}
 
 		// j
@@ -411,6 +529,7 @@ return enemielevel;
 		// k
 		if (key == 75 && characterchosen != null&&lose==false) {
 			abilityChooser(2);
+
 		}
 
 		// L
@@ -424,11 +543,9 @@ return enemielevel;
 	public void abilityChooser(int index) {
 		if (characterchosen.getAbility().get(index) instanceof Range) {
 			a = characterchosen.getAbility().get(index);
-			// System.out.println("x"+characterchosen.getX());
-			shoot.add(new Range(characterchosen.getX() + 100, characterchosen.getY() + 100, 2, 2, a.getName(),a.getDamage(), a.getHealth(), a.getLevel(), a.getImg()));
-			// drawwep = true;
-			// System.out.println(shoot);
-
+			shoot.add(new Range(characterchosen.getX() + 100, characterchosen.getY() + 100, a.getDx(), a.getDy(), a.getName(),a.getDamage(), a.getHealth(), a.getLevel(), a.getImg()));
+	
+			
 		} else {
 			if (characterchosen.getAbility().get(index) instanceof Melee) {
 				ability.add(characterchosen.getAbility().get(index));
@@ -446,10 +563,13 @@ return enemielevel;
 
 				} else if (characterchosen.getAbility().get(index) instanceof RightCross) {
 					hit.add(new RightCross(characterchosen.getX(), characterchosen.getY()));
+					
 				} else if (characterchosen.getAbility().get(index) instanceof Crucifiction) {
 					hit.add(new Crucifiction(characterchosen.getX(), characterchosen.getY()));
+
 				} else if (characterchosen.getAbility().get(index) instanceof ShankShallom) {
 					hit.add(new ShankShallom(characterchosen.getX(), characterchosen.getY()));
+
 				} else if (characterchosen.getAbility().get(index) instanceof HijabHit) {
 					hit.add(new HijabHit(characterchosen.getX(), characterchosen.getY()));
 				}
@@ -473,8 +593,21 @@ return enemielevel;
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
+		
+			if(e.getKeyCode()==KeyEvent.VK_W){
+				up=false;
+			}
+		if(e.getKeyCode()==KeyEvent.VK_A){
+			left=false;
+			}
+		if(e.getKeyCode()==KeyEvent.VK_D){
+				right=false;
+			}
+			 if(e.getKeyCode()==KeyEvent.VK_S){
+				down=false;
+			 }
 
-	}
+			}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -545,5 +678,7 @@ return enemielevel;
 		// TODO Auto-generated method stub
 
 	}
+
+	
 
 }

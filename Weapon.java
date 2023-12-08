@@ -122,19 +122,19 @@ public class Weapon {
 	}
 
 	
-	public void ReverseHorz() {
-		xV+=dxV*-1;
+	public int getDx() {
+		return xV;
 	}
-	public void ReverseVert(){
-		yV+=dyV*-1;
+	public int getDy(){
+		return yV;
 	}
-	public void Horz() {
-		xV+=dxV;
+		public void setDx(int xV) {
+		this.xV= xV;
 	}
-	public void Vert(){
-		yV+=dyV;
+	
+			public void setDy(int yV) {
+		this.yV= yV;
 	}
-
 
 	
 
