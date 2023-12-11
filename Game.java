@@ -193,7 +193,6 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		}
 		if(lose){
 			gameplay=true;
-			charselction=false;
 			starter = false;
 		endscreen(g2d);
 		}
