@@ -52,10 +52,11 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private ArrayList<eattack> pow;
 	private boolean lose, pcollide, ecollide;
 	private int enemielevel;
-
+private boolean winnner;
 
 
 	private File file;
+	
 	public Game() {
 		new Thread(this).start();
 		this.addKeyListener(this);
@@ -151,8 +152,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	public void write2file(){
 		try{
  FileWriter mywriter = new FileWriter(file);
- mywriter.write("You Have"+enemies.size()+ "enemies left");
- mywriter.close();
+ 	mywriter.write(4-enemies.size()+ "\n");
+
+ 	mywriter.close();
 	}
 	catch(IOException e){
 	e.printStackTrace();	
@@ -160,15 +162,27 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	
 }
 	public void ReadFile(){
-		try{
+		try {
 			Scanner sc = new Scanner(file);
-			while(sc.hasNext()){
-				System.out.println(sc.nextLine());
+	//		girlPowergirl.setX(write2file());
+			int tempint = sc.nextInt();
+			System.out.println(tempint);
+			if(enemies.size()>0){
+			if(tempint>0 && tempint<4) {
+					for(int i=0; i<tempint; i++) {
+						enemies.remove();
+					}
+			} else {
+				System.out.println("Is 0 or 4");
 			}
-			}catch (FileNotFoundException e){
-				e.printStackTrace();
-			}
+				
+			System.out.println(enemies.peek().toString());
 		}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public void paint(Graphics g) {
 
@@ -195,6 +209,11 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			gameplay=true;
 			starter = false;
 		endscreen(g2d);
+		write2file();
+		}
+		if(winnner){
+			winscreen(g2d);
+			ReadFile();
 		}
 		drawrange(g2d);
 		drawmelee(g2d);
@@ -241,10 +260,13 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		}
 	}
 
+
+
+
 	private void drawrange(Graphics g2d) {
 		// System.out.println("is there anything here???" +shoot.size());
 		for (int i=0; i<shoot.size(); i++) {
-			g2d.drawImage(shoot.get(i).getImg().getImage(), shoot.get(i).getX(), shoot.get(i).getY(), 50, 50, this);
+			g2d.drawImage(shoot.get(i).getImg().getImage(), shoot.get(i).getDx(), shoot.get(i).getDy(), 50, 50, this);
 		
 		
  
@@ -252,6 +274,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			if (shoot.get(i).getX() < 0) {
 				shoot.remove(i);
 			}
+
 			// collision for player
 			if (shoot.get(i).getX() <= enemies.element().getX() + enemies.element().getW()
 					&& shoot.get(i).getY() > enemies.element().getY()
@@ -275,15 +298,25 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			pow.get(i).getX()<=characterchosen.getX()+ characterchosen.getW()&&
 		 pow.get(i).getY()  >= characterchosen.getY() && 
 			pow.get(i).getY()  <= characterchosen.getY() +characterchosen.getH()) {
-		
-		pow.remove(i);
-		lose=true;
-		ecollide=true;
+
+			removeehealth();
+
+	
+				}
+		if(enemies.element().getHp()<=0){
+						pow.remove(i);
+						lose=true;
+						ecollide=true;
+	
 		}
 	}
 	}
 
 
+	public int removeehealth(){
+		return enemies.element().getHp()-characterchosen.getDa();
+		
+	}
 	private void gameplay(Graphics g2d) {
 		// TODO Auto-generated method stub
 		g2d.clearRect(0, 0, getSize().width, getSize().height);
@@ -299,7 +332,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			}
 			
 			if(enemies.isEmpty()){
-			winscreen(g2d);
+			winnner=true;
+			
 		}
 		}
 
@@ -434,25 +468,24 @@ return enemielevel;
 		// TODO Auto-generated method stub
 		int key;
 		key = e.getKeyCode();
-		int dx=0;
-		int dy=0;
+
 //add them changing in key lisetner
 			if(e.getKeyCode()==KeyEvent.VK_W){
 				up=true;
-				dy=-1;
-				System.out.println("w pressed");
+	
+			
 			}
 			 if(e.getKeyCode()==KeyEvent.VK_A){
 			left=true;
-			dx=-1;
+	
 			}
 			if(e.getKeyCode()==KeyEvent.VK_D){
 				right=true;
-				dx=1;
+		
 			}
 			 if(e.getKeyCode()==KeyEvent.VK_S){
 				down=true;
-			dy=1;
+
 			
 			}
 			
@@ -542,6 +575,19 @@ return enemielevel;
 	public void abilityChooser(int index) {
 		if (characterchosen.getAbility().get(index) instanceof Range) {
 			a = characterchosen.getAbility().get(index);
+
+		if(down=true){
+		a.setDy(1);
+		}
+		if(up=true){
+		a.setDy(-1);
+		}
+		if(right=true){
+		a.setDx(1);
+		}
+		if(left=true){
+		a.setDx(-1);
+		}
 			shoot.add(new Range(characterchosen.getX() + 100, characterchosen.getY() + 100, a.getDx(), a.getDy(), a.getName(),a.getDamage(), a.getHealth(), a.getLevel(), a.getImg()));
 	
 			

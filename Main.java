@@ -29,6 +29,7 @@ public class Main extends JFrame{
 				// TODO Auto-generated method stub
 			//	throw new UnsupportedOperationException("Unimplemented method 'windowOpened'");
 				play.createsvaefile();
+				play.ReadFile();
 			}
 
 			@Override
