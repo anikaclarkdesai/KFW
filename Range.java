@@ -23,4 +23,5 @@ public int x,y,h,w,speed, dx,dy, ldx;
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
+
 }

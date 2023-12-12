@@ -156,6 +156,12 @@ public class Weapon {
 	}
 
 
+	public void move(){
+		xV+=dxV;
+		yV+=dyV;
+		//System.out.println("dx"+dx);
+		//System.out.println("dy"+dy);
+	}
 	
 	public void setY(int y) {
 		this.yV = y;

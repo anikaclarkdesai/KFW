@@ -208,15 +208,19 @@ private boolean winnner;
 		if(lose){
 			gameplay=true;
 			starter = false;
+			winnner=false;
 		endscreen(g2d);
-		write2file();
+		ReadFile();
 		}
 		if(winnner){
 			winscreen(g2d);
-			ReadFile();
+			
 		}
+		if(enemies.element()!=null){
 		drawrange(g2d);
 		drawmelee(g2d);
+		}
+		
 	
 		twoDgraph.drawImage(back, null, 0, 0);
 
@@ -261,14 +265,19 @@ private boolean winnner;
 	}
 
 
+	public void move(){
+		for(Range r: shoot){
+			r.move();
+		}
+	}
 
 
 	private void drawrange(Graphics g2d) {
 		// System.out.println("is there anything here???" +shoot.size());
 		for (int i=0; i<shoot.size(); i++) {
-			g2d.drawImage(shoot.get(i).getImg().getImage(), shoot.get(i).getDx(), shoot.get(i).getDy(), 50, 50, this);
+			g2d.drawImage(shoot.get(i).getImg().getImage(), shoot.get(i).getX(), shoot.get(i).getY(), 50, 50, this);
 		
-		
+		move();
  
 
 			if (shoot.get(i).getX() < 0) {
@@ -298,17 +307,20 @@ private boolean winnner;
 			pow.get(i).getX()<=characterchosen.getX()+ characterchosen.getW()&&
 		 pow.get(i).getY()  >= characterchosen.getY() && 
 			pow.get(i).getY()  <= characterchosen.getY() +characterchosen.getH()) {
-
-			removeehealth();
-
-	
+			pow.remove(i);
+		
+				
+			characterchosen.setHp(characterchosen.getHp()-enemies.element().getDa());
+		
 				}
-		if(enemies.element().getHp()<=0){
-						pow.remove(i);
+					if(characterchosen.getHp()<0){
+
 						lose=true;
-						ecollide=true;
+						
+ecollide=true;
 	
 		}
+		
 	}
 	}
 
@@ -317,6 +329,7 @@ private boolean winnner;
 		return enemies.element().getHp()-characterchosen.getDa();
 		
 	}
+
 	private void gameplay(Graphics g2d) {
 		// TODO Auto-generated method stub
 		g2d.clearRect(0, 0, getSize().width, getSize().height);
@@ -324,6 +337,7 @@ private boolean winnner;
 		
 		if(!enemies.isEmpty()){
 			drawenemies(g2d);
+			winnner=false;
 		}
 		
 			if(lose!=true){
@@ -573,22 +587,39 @@ return enemielevel;
 	}
 
 	public void abilityChooser(int index) {
+	System.out.println("ability");
 		if (characterchosen.getAbility().get(index) instanceof Range) {
+			System.out.println(down);
 			a = characterchosen.getAbility().get(index);
+			int dx=0;
+			int dy=0;
+		if(down==true){
+	dy=1;
+	//dx=0;
+	down=false;
+		}
 
-		if(down=true){
-		a.setDy(1);
+
+		if(up==true){
+		dy=-1;
+		//dx=0;
+		up=false;
 		}
-		if(up=true){
-		a.setDy(-1);
+
+		if(right==true){
+		dx=1;
+		//dy=0;
+		right=false;
 		}
-		if(right=true){
-		a.setDx(1);
+
+
+		if(left==true){
+	dx=-1;
+	//dy=0;
+	left=false;
 		}
-		if(left=true){
-		a.setDx(-1);
-		}
-			shoot.add(new Range(characterchosen.getX() + 100, characterchosen.getY() + 100, a.getDx(), a.getDy(), a.getName(),a.getDamage(), a.getHealth(), a.getLevel(), a.getImg()));
+
+			shoot.add(new Range(characterchosen.getX() + 100, characterchosen.getY() + 100, dx, dy, a.getName(),a.getDamage(), a.getHealth(), a.getLevel(), a.getImg()));
 	
 			
 		} else {
@@ -638,7 +669,7 @@ return enemielevel;
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+		/*
 			if(e.getKeyCode()==KeyEvent.VK_W){
 				up=false;
 			}
@@ -651,7 +682,7 @@ return enemielevel;
 			 if(e.getKeyCode()==KeyEvent.VK_S){
 				down=false;
 			 }
-
+ */
 			}
 
 	@Override
